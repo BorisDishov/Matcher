@@ -29,13 +29,6 @@ public class LeaderboardSQLActivity extends AppCompatActivity {
 
         dbUtils = DatabaseUtils.getInstance(this);
         getUsers();
-
-//        recView = (RecyclerView) findViewById(R.id.rec_view_sql);
-//        final Bundle b = getIntent().getExtras();
-//        users = b.getParcelableArrayList("SQLUsers");
-//        Collections.sort(users);
-//        recView.setLayoutManager(new LinearLayoutManager(this));
-//        recView.setAdapter(new CustomAdapter(users));
     }
 
     private void getUsers(){
@@ -50,8 +43,6 @@ public class LeaderboardSQLActivity extends AppCompatActivity {
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
                 recView = (RecyclerView) findViewById(R.id.rec_view_sql);
-//                final Bundle b = getIntent().getExtras();
-//                users = b.getParcelableArrayList("SQLUsers");
                 Collections.sort(users);
                 recView.setLayoutManager(new LinearLayoutManager(LeaderboardSQLActivity.this));
                 recView.setAdapter(new CustomAdapter(users));

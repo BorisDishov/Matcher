@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     Button btnLeaderboardSQL;
     DatabaseHelper dbHelper;
     ArrayList<User> users;
-    ArrayList<User> SQLUsers;
     SQLHelper sqlHelper;
     DatabaseUtils dbUtils;
 
@@ -35,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         dbUtils = DatabaseUtils.getInstance(this);
 
         users = dbHelper.readUsersFromDatabase();
-//        SQLUsers = getUsers();
 
         btnPlay = (Button) findViewById(R.id.btn_play);
         btnLeaderboard = (Button) findViewById(R.id.btn_leaderboard);
@@ -68,25 +66,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, LeaderboardSQLActivity.class);
-//                Bundle b = new Bundle();
-//                b.putParcelableArrayList("SQLUsers", SQLUsers);
-//                i.putExtras(b);
                 startActivity(i);
             }
         });
-    }
-
-    private ArrayList<User> getUsers(){
-        ArrayList<User> users = new ArrayList<>();
-        Cursor cursor = dbUtils.readUserRecord();
-        if (cursor.moveToFirst()) {
-            do {
-                String name = cursor.getString(cursor.getColumnIndex(SQLHelper.KEY_NAME));
-                int score = cursor.getInt(cursor.getColumnIndex(SQLHelper.KEY_SCORE));
-                double time = cursor.getDouble(cursor.getColumnIndex(SQLHelper.KEY_TIME));
-                users.add(new User(name, score, time));
-            } while (cursor.moveToNext());
-        }
-        return users;
     }
 }

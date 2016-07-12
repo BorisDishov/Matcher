@@ -2,7 +2,6 @@ package com.vratsasoftware.adroid.matcher.cmn;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 
 public class User implements Parcelable, Comparable<User>{
 

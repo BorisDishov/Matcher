@@ -19,9 +19,6 @@ import com.vratsasoftware.adroid.matcher.GameplayActivity;
 import com.vratsasoftware.adroid.matcher.R;
 import com.vratsasoftware.adroid.matcher.game_logic.GameHelper;
 
-/**
- * Created by VS-PC on 7/10/2016.
- */
 public class SaveScoreFragment extends Fragment{
 
     Button btnOk;

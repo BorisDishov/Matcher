@@ -2,8 +2,6 @@ package com.vratsasoftware.adroid.matcher;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +16,6 @@ import android.widget.TextView;
 import com.firebase.client.Firebase;
 import com.vratsasoftware.adroid.matcher.Database.DatabaseHelper;
 import com.vratsasoftware.adroid.matcher.cmn.SaveScoreFragment;
-import com.vratsasoftware.adroid.matcher.cmn.User;
 import com.vratsasoftware.adroid.matcher.game_logic.Block;
 import com.vratsasoftware.adroid.matcher.game_logic.GameHelper;
 
@@ -83,25 +80,29 @@ public class GameplayActivity extends AppCompatActivity {
             btn.setVisibility(View.VISIBLE);
             final int finalI = i;
             final ColorDrawable cd = (ColorDrawable) btn.getBackground();
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    gameHelper.removeConnectedBlocks(finalI, cd.getColor());
-                    gameHelper.adjustBlocks();
-                    if(!gameHelper.checkForPossibleMoves()){
-                        endTime = System.currentTimeMillis();
-                        if(relative.getChildAt(30).getVisibility() == View.INVISIBLE) {
-                            txtGameOver.setText("CONGRATULATIONS!");
-                        } else {
-                            txtGameOver.setText("GAME OVER!");
-                        }
-                        setFragmentVisibility(true);
-                        setRelativeVisibility(false);
-                    }
-                }
-            });
+            setClickListener(btn, finalI, cd);
         }
         startTime = System.currentTimeMillis();
+    }
+
+    private void setClickListener(Button btn, final int finalI, final ColorDrawable cd){
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameHelper.removeConnectedBlocks(finalI, cd.getColor());
+                gameHelper.adjustBlocks();
+                if(!gameHelper.checkForPossibleMoves()){
+                    endTime = System.currentTimeMillis();
+                    if(relative.getChildAt(30).getVisibility() == View.INVISIBLE) {
+                        txtGameOver.setText("CONGRATULATIONS!");
+                    } else {
+                        txtGameOver.setText("GAME OVER!");
+                    }
+                    setFragmentVisibility(true);
+                    setRelativeVisibility(false);
+                }
+            }
+        });
     }
 
     public void setButtonsVisibility(boolean visibility){
