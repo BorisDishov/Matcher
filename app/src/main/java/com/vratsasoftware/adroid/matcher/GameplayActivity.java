@@ -1,18 +1,23 @@
 package com.vratsasoftware.adroid.matcher;
 
+import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.vratsasoftware.adroid.matcher.Database.DatabaseHelper;
+import com.vratsasoftware.adroid.matcher.cmn.SaveScoreFragment;
 import com.vratsasoftware.adroid.matcher.cmn.User;
 import com.vratsasoftware.adroid.matcher.game_logic.Block;
 import com.vratsasoftware.adroid.matcher.game_logic.GameHelper;
@@ -27,6 +32,8 @@ public class GameplayActivity extends AppCompatActivity {
     EditText edtName;
     long startTime;
     long endTime;
+    FrameLayout fragmentContainer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,49 +41,42 @@ public class GameplayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gameplay);
         Firebase.setAndroidContext(this);
 
+        fragmentContainer = (FrameLayout) findViewById(R.id.fragment_container);
+        setFragmentContainer();
+
         relative = (RelativeLayout) findViewById(R.id.relative);
         gameHelper = new GameHelper(relative);
         edtName = (EditText) findViewById(R.id.edt_name);
         txtGameOver = (TextView) findViewById(R.id.txt_game_over);
         dbHelper = new DatabaseHelper(this);
         btnTryAgain = (Button) findViewById(R.id.btn_try_again);
+
         btnTryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txtGameOver.setVisibility(View.INVISIBLE);
-                btnTryAgain.setVisibility(View.INVISIBLE);
                 edtName.setVisibility(View.INVISIBLE);
-                btnTryAgain.setClickable(false);
-                edtName.setClickable(false);
-                final String name = edtName.getText().toString();
-                writeRecord(name);
+                setButtonsVisibility(false);
+                createNewGame();
             }
         });
         createNewGame();
     }
 
-    private void writeRecord(final String name){
-        AsyncTask <Void, Void, Void> as = new AsyncTask() {
-            @Override
-            protected Void doInBackground(Object[] params) {
-                User user = new User(name, gameHelper.getPoints(), getTime());
-                dbHelper.writeToDatabase(user);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                createNewGame();
-            }
-        }.execute();
+    private void setFragmentContainer(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        SaveScoreFragment fragment = new SaveScoreFragment();
+        fragmentTransaction.add(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
-    private double getTime(){
+    public double getTime(){
         double time = endTime - startTime;
         return time / 1000;
     }
 
-    private void createNewGame(){
+    public void createNewGame(){
         for(int i = 0; i < 36; i++){
             final Button btn = (Button) relative.getChildAt(i);
             btn.setBackgroundResource(Block.getRandomColor());
@@ -95,15 +95,48 @@ public class GameplayActivity extends AppCompatActivity {
                         } else {
                             txtGameOver.setText("GAME OVER!");
                         }
-                        txtGameOver.setVisibility(View.VISIBLE);
-                        btnTryAgain.setVisibility(View.VISIBLE);
-                        edtName.setVisibility(View.VISIBLE);
-                        btnTryAgain.setClickable(true);
-                        edtName.setClickable(true);
+                        setFragmentVisibility(true);
+                        setRelativeVisibility(false);
                     }
                 }
             });
         }
         startTime = System.currentTimeMillis();
+    }
+
+    public void setButtonsVisibility(boolean visibility){
+        if(visibility){
+            btnTryAgain.setVisibility(View.VISIBLE);
+            txtGameOver.setVisibility(View.VISIBLE);
+        } else {
+            btnTryAgain.setVisibility(View.INVISIBLE);
+            txtGameOver.setVisibility(View.INVISIBLE);
+        }
+        btnTryAgain.setClickable(visibility);
+    }
+
+    public RelativeLayout getRelative(){
+        return this.relative;
+    }
+
+    public void setRelativeVisibility(boolean visible){
+        if(visible){
+            relative.setVisibility(View.VISIBLE);
+        } else {
+            relative.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public Context getContext(){
+        return this;
+    }
+
+    public void setFragmentVisibility(boolean visibility){
+        if(visibility){
+            fragmentContainer.bringToFront();
+            fragmentContainer.setVisibility(View.VISIBLE);
+        } else {
+            fragmentContainer.setVisibility(View.INVISIBLE);
+        }
     }
 }

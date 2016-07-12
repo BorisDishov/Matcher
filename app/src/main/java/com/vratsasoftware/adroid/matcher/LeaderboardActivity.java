@@ -11,22 +11,22 @@ import com.vratsasoftware.adroid.matcher.cmn.CustomAdapter;
 import com.vratsasoftware.adroid.matcher.cmn.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class LeaderboardActivity extends AppCompatActivity {
 
     RecyclerView recView;
     ArrayList<User> users;
-    DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
 
-        dbHelper = new DatabaseHelper(this);
         recView = (RecyclerView) findViewById(R.id.rec_view);
-//        users = dbHelper.readUsersFromDatabase();
-        users = (ArrayList<User>) getIntent().getExtras().get("users");
+        final Bundle b = getIntent().getExtras();
+        users = b.getParcelableArrayList("users");
+        Collections.sort(users);
         recView.setLayoutManager(new LinearLayoutManager(this));
         recView.setAdapter(new CustomAdapter(users));
     }

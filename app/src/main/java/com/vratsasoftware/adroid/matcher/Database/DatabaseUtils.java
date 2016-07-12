@@ -1,44 +1,41 @@
 package com.vratsasoftware.adroid.matcher.Database;
 
 import android.content.Context;
+import android.database.Cursor;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.vratsasoftware.adroid.matcher.cmn.User;
 
 public class DatabaseUtils {
 
-    private static FirebaseDatabase instance;
-    private static String userID = "0";
-    private static int userIDNumber = 0;
+    private static DatabaseUtils instance;
+    private SQLHelper db;
 
-    private DatabaseUtils(){
+    private DatabaseUtils(Context context){
+        initDB(context);
     }
 
-    public static FirebaseDatabase getInstance(){
+    public static DatabaseUtils getInstance(Context context){
         if(instance == null){
-            instance = FirebaseDatabase.getInstance();
+            instance = new DatabaseUtils(context);
         }
         return instance;
     }
 
-    public static String getUserID(){
-        return userID;
+    public void writeUserRecord(User user){
+        db.insertUser(user);
     }
 
-    public static void incrementUserID(){
-        userIDNumber++;
-        userID = String.valueOf(userIDNumber);
+    public Cursor readUserRecord(){
+        return db.getUserValues();
     }
 
-//    private DatabaseUtils(Context context){
-//        initDB(context);
-//    }
-//
-//
-//    private DatabaseHelper initDB(Context context){
-//        if(db == null){
-//            db = new DatabaseHelper(context);
-//        }
-//        return db;
-//    }
+    private SQLHelper initDB(Context context) {
+        if (db == null){
+            db = new SQLHelper(context);
+
+        }
+        return db;
+    }
 
 }

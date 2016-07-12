@@ -28,7 +28,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         User user = users.get(position);
-        holder.txtNumber.setText(String.valueOf(position));
+        holder.txtNumber.setText(String.valueOf(position + 1) + ".");
+        holder.txtName.setText(user.getName() + ":");
         holder.txtUserInformation.setText(getUserString(user));
     }
 
@@ -38,18 +39,22 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
     }
 
     private String getUserString(User user){
-        return user.getName() + " : " + user.getScore() + "p, " + user.getTime() + "s;";
+        return user.getScore() + "p,   " + user.getTime() + "s;";
     }
 
     class CustomViewHolder extends RecyclerView.ViewHolder{
 
         TextView txtNumber;
+        TextView txtName;
         TextView txtUserInformation;
+        View separator;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
             txtNumber = (TextView) itemView.findViewById(R.id.txt_number);
+            txtName = (TextView) itemView.findViewById(R.id.txt_name);
             txtUserInformation = (TextView) itemView.findViewById(R.id.txt_user_information);
+            separator = (View) itemView.findViewById(R.id.separator);
         }
     }
 }

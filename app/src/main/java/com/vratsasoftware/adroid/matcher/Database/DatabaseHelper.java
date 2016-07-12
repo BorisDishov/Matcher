@@ -16,29 +16,38 @@ public class DatabaseHelper {
     private Firebase database;
     private final String LEADERBOARD = "Leaderboard";
     private final String DATABASE_URL = "https://matcher-c12d9.firebaseio.com/";
-    private final String USERNAME = "userName";
-    private final String SCORE = "score";
-    private final String TIME = "time";
+    private boolean flag;
 
-    public DatabaseHelper(Context context){
+    public DatabaseHelper(Context context) {
         Firebase.setAndroidContext(context);
         database = new Firebase(DATABASE_URL);
+        flag = true;
     }
 
-    public void writeToDatabase(User user){
+    public void writeToDatabase(User user) {
         database.child(LEADERBOARD).push().setValue(user);
     }
 
-    public ArrayList<User> readUsersFromDatabase(){
+    public ArrayList<User> readUsersFromDatabase() {
         final ArrayList<User> users = new ArrayList<User>();
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot userSnapshot : dataSnapshot.child(LEADERBOARD).getChildren()){
+                DataSnapshot lastSnapshot = null;
+                for (DataSnapshot userSnapshot : dataSnapshot.child(LEADERBOARD).getChildren()) {
                     User user = userSnapshot.getValue(User.class);
-                    users.add(user);
-                    Log.e("read", "read a new user");
+                    lastSnapshot = userSnapshot;
+                    if (flag) {
+                        users.add(user);
+                        Log.e("read", "read a new user");
+                    }
                 }
+                if(!flag){
+                    User user = lastSnapshot.getValue(User.class);
+                    users.add(user);
+                }
+                flag = false;
+
             }
 
             @Override
